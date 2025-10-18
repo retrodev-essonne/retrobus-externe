@@ -15,8 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import vehicleImage1 from "../assets/920_pres.jpg";
-
-const API_BASE = import.meta.env.VITE_API_URL || 'https://attractive-kindness-rbe-serveurs.up.railway.app';
+import { API_BASE } from '../lib/api';
 
 // Images par défaut pour les véhicules
 const defaultImages = {
