@@ -19,7 +19,7 @@
   --text-dark: #222;
   
   /* Variables mobiles */
-  --mobile-header-h: 70px;
+  --mobile-header-h: 64px;
   --mobile-nav-h: 0px;
   --mobile-gutter: 16px;
   --touch-target: 44px;
@@ -146,7 +146,7 @@ a:hover {
 }
 
 .header-logo {
-  height: 50px;
+  height: 44px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -193,7 +193,7 @@ a:hover {
 .hero.full-bleed {
   background-position: center center;
   background-size: cover;
-  min-height: 280px;
+  min-height: 240px;
   display: flex;
   align-items: center;
   color: #fff;
@@ -818,5 +818,13 @@ a:hover {
 @media (min-width: 769px) {
   .vehicle-detail-landing {
     margin-top: -44px;
+  }
+}
+
+/* For very small screens, force single-column grids to avoid overflow */
+@media (max-width: 480px) {
+  .site-main .chakra-simple-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
   }
 }
