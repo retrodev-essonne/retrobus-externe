@@ -45,6 +45,12 @@ html, body {
   font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
 }
 
+/* Médias réactifs par défaut */
+img, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}
+
 /* Force Montserrat sur tous les éléments Chakra UI */
 *, *::before, *::after,
 .chakra-ui-light, .chakra-ui-dark,
@@ -157,6 +163,7 @@ a:hover {
   margin: 0;
   padding-left: var(--mobile-gutter);
   padding-right: var(--mobile-gutter);
+  overflow-x: hidden;
 }
 
 .full-bleed {
