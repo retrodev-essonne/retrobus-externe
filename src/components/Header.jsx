@@ -3,8 +3,9 @@ import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
   Box, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody,
-  useDisclosure, VStack, Text, Heading, Button, Input, FormControl, FormLabel, HStack, Image
+  useDisclosure, VStack, Text, Heading, Button, Input, FormControl, FormLabel, HStack, Image, IconButton
 } from "@chakra-ui/react";
+import { HamburgerIcon } from "@chakra-ui/icons";
 import bg from "../assets/_MG_0969.jpg";
 import logoDefault from "../assets/RétroBouh2025.svg";
 import Navbar from "./Navbar.jsx";
@@ -31,6 +32,7 @@ const HEADER_BG = "/assets/fallback/_MG_1006.jpg";
 export default function Header() {
   const { isOpen: isDonateOpen, onOpen: onDonateOpen, onClose: onDonateClose } = useDisclosure();
   const { isOpen: isNewsletterOpen, onOpen: onNewsletterOpen, onClose: onNewsletterClose } = useDisclosure();
+  const navDisclosure = useDisclosure();
   
   const [donateAmount, setDonateAmount] = useState("");
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -62,6 +64,21 @@ export default function Header() {
             alt="Logo RBE"
             fallback={logoDefault}
           />
+          {/* Mobile menu trigger on the right inside header */}
+          <Box display={{ base: "block", md: "none" }}>
+            <IconButton
+              icon={<HamburgerIcon />}
+              onClick={navDisclosure.onOpen}
+              variant="solid"
+              bg="whiteAlpha.900"
+              color="var(--rbe-red)"
+              size="md"
+              borderRadius="full"
+              boxShadow="sm"
+              _hover={{ bg: "var(--rbe-red)", color: "white" }}
+              aria-label="Menu"
+            />
+          </Box>
         </div>
       </header>
 
@@ -70,6 +87,13 @@ export default function Header() {
         newsletterIcon={<EnvelopeIcon />}
         onDonateClick={handleDonateClick}
         onNewsletterClick={onNewsletterOpen}
+        // Pass disclosure to embed Drawer without its own trigger
+        isOpen={navDisclosure.isOpen}
+        onOpen={navDisclosure.onOpen}
+        onClose={navDisclosure.onClose}
+        embedded
+        // Optional: pass a first name if available
+        userName={(typeof window !== 'undefined' && (localStorage.getItem('prenom') || localStorage.getItem('firstName') || localStorage.getItem('firstname') || localStorage.getItem('name'))) || undefined}
       />
 
       {/* Modal Newsletter */}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Box,
@@ -39,8 +39,12 @@ const UpdateIcon = ({ size = 26 }) => (
   </svg>
 );
 
-export default function Navbar({ donateIcon, newsletterIcon, onDonateClick, onNewsletterClick }) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+export default function Navbar({ donateIcon, newsletterIcon, onDonateClick, onNewsletterClick, isOpen: isOpenProp, onOpen: onOpenProp, onClose: onCloseProp, embedded = false, userName }) {
+  const internalDisclosure = useDisclosure();
+  const isControlled = typeof isOpenProp === 'boolean' && typeof onOpenProp === 'function' && typeof onCloseProp === 'function';
+  const isOpen = isControlled ? isOpenProp : internalDisclosure.isOpen;
+  const onOpen = isControlled ? onOpenProp : internalDisclosure.onOpen;
+  const onClose = isControlled ? onCloseProp : internalDisclosure.onClose;
   const { 
     isOpen: isNewsletterOpen, 
     onOpen: onNewsletterOpen, 
@@ -229,39 +233,63 @@ export default function Navbar({ donateIcon, newsletterIcon, onDonateClick, onNe
     );
   }
 
+  // Derive a first name if provided or stored locally
+  const firstName = useMemo(() => {
+    if (userName && typeof userName === 'string') return userName;
+    if (typeof window !== 'undefined') {
+      return (
+        localStorage.getItem('prenom') ||
+        localStorage.getItem('firstName') ||
+        localStorage.getItem('firstname') ||
+        localStorage.getItem('name') ||
+        null
+      );
+    }
+    return null;
+  }, [userName]);
+
   // Mobile
   return (
     <>
-      <Box
-        position="fixed"
-        top="20px"
-        right="20px"
-        zIndex={1000}
-        display={{ base: "block", md: "none" }}
-      >
-        <IconButton
-          icon={<HamburgerIcon />}
-          onClick={onOpen}
-          variant="solid"
-          bg="whiteAlpha.900"
-          color="var(--rbe-red)"
-          size="lg"
-          borderRadius="full"
-          boxShadow="lg"
-          _hover={{ bg: "var(--rbe-red)", color: "white" }}
-          aria-label="Menu de navigation"
-        />
-      </Box>
+      {!embedded && (
+        <Box
+          position="fixed"
+          top="20px"
+          right="20px"
+          zIndex={1000}
+          display={{ base: "block", md: "none" }}
+        >
+          <IconButton
+            icon={<HamburgerIcon />}
+            onClick={onOpen}
+            variant="solid"
+            bg="whiteAlpha.900"
+            color="var(--rbe-red)"
+            size="lg"
+            borderRadius="full"
+            boxShadow="lg"
+            _hover={{ bg: "var(--rbe-red)", color: "white" }}
+            aria-label="Menu de navigation"
+          />
+        </Box>
+      )}
 
       <Drawer isOpen={isOpen} onClose={onClose} placement="right">
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader bg="var(--rbe-red)" color="white" display="flex" alignItems="center" gap={3}>
-            <Box as={Link} to="/changelog" aria-label="Changelog" onClick={onClose} style={{ textDecoration: 'none' }}>
-              <UpdateIcon size={22} />
-            </Box>
-            Association RétroBus Essonne
+          <DrawerHeader bg="var(--rbe-red)" color="white" display="flex" flexDirection="column" alignItems="flex-start" gap={1}>
+            <HStack spacing={3} w="full" alignItems="center">
+              <Box as={Link} to="/changelog" aria-label="Changelog" onClick={onClose} style={{ textDecoration: 'none' }}>
+                <UpdateIcon size={22} />
+              </Box>
+              <Box as="span" fontWeight="bold">Association RétroBus Essonne</Box>
+            </HStack>
+            {firstName && (
+              <Text fontSize="sm" color="whiteAlpha.900" mt={1}>
+                👋 Bonjour {firstName}
+              </Text>
+            )}
           </DrawerHeader>
           <DrawerBody p={0}>
             <VStack spacing={0} align="stretch">
