@@ -45,8 +45,25 @@ html, body {
   font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
 }
 
-/* Médias réactifs par défaut */
-img, video, canvas, svg {
+/* Médias responsives par défaut */
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+iframe {
+  max-width: 100%;
+}
+
+/* Conteneur scroll horizontal utile sur petits écrans */
+.mobile-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Médias responsives par défaut */
+img, video, canvas, iframe {
   max-width: 100%;
   height: auto;
 }
@@ -163,7 +180,6 @@ a:hover {
   margin: 0;
   padding-left: var(--mobile-gutter);
   padding-right: var(--mobile-gutter);
-  overflow-x: hidden;
 }
 
 .full-bleed {

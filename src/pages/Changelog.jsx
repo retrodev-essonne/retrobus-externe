@@ -49,14 +49,29 @@ export default function Changelog() {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`${API_BASE}/changelog`);
-      
-      if (response.ok) {
-        const data = await response.json();
-        setChangelog(data.entries || []);
-      } else {
-        throw new Error(`Erreur ${response.status}`);
+      // Try absolute API first if provided, else relative (rewritten by Vercel)
+      const urls = [];
+      if (API_BASE) urls.push(`${API_BASE.replace(/\/$/, '')}/changelog`);
+      urls.push('/changelog');
+
+      let data = null;
+      let lastErr = null;
+      for (const url of urls) {
+        try {
+          const res = await fetch(url);
+          if (res.ok) {
+            data = await res.json();
+            break;
+          } else {
+            lastErr = new Error(`HTTP ${res.status}`);
+          }
+        } catch (e) {
+          lastErr = e;
+        }
       }
+
+      if (!data) throw lastErr || new Error('Changelog indisponible');
+      setChangelog(data.entries || []);
     } catch (err) {
       console.error('Erreur chargement changelog:', err);
       setError('Impossible de charger l\'historique des versions');
