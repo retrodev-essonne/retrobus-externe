@@ -136,6 +136,21 @@ export default function Navbar({ donateIcon, newsletterIcon, onDonateClick, onNe
     { to: "/contact", label: "Contact" },
   ];
 
+  // Derive a first name if provided or stored locally (must be declared before any early return)
+  const firstName = useMemo(() => {
+    if (userName && typeof userName === 'string') return userName;
+    if (typeof window !== 'undefined') {
+      return (
+        localStorage.getItem('prenom') ||
+        localStorage.getItem('firstName') ||
+        localStorage.getItem('firstname') ||
+        localStorage.getItem('name') ||
+        null
+      );
+    }
+    return null;
+  }, [userName]);
+
   if (!isMobile) {
     return (
       <nav className="site-nav" aria-label="Navigation principale" style={{ position: 'relative' }}>
@@ -232,21 +247,6 @@ export default function Navbar({ donateIcon, newsletterIcon, onDonateClick, onNe
       </nav>
     );
   }
-
-  // Derive a first name if provided or stored locally
-  const firstName = useMemo(() => {
-    if (userName && typeof userName === 'string') return userName;
-    if (typeof window !== 'undefined') {
-      return (
-        localStorage.getItem('prenom') ||
-        localStorage.getItem('firstName') ||
-        localStorage.getItem('firstname') ||
-        localStorage.getItem('name') ||
-        null
-      );
-    }
-    return null;
-  }, [userName]);
 
   // Mobile
   return (
