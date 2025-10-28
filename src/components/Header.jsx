@@ -41,9 +41,33 @@ export default function Header() {
   const location = useLocation();
 
   // Fonction pour ouvrir HelloAsso
-  const handleDonateClick = () => {
-    window.open('https://www.helloasso.com/associations/retrobus-essonne', '_blank');
-  };
+    const [helloAssoUrl, setHelloAssoUrl] = useState('https://www.helloasso.com/associations/retrobus-essonne');
+
+    useEffect(() => {
+      const API_BASE = import.meta.env.VITE_API_URL || 'https://attractive-kindness-rbe-serveurs.up.railway.app';
+      const candidates = [
+        `${(API_BASE || '').replace(/\/$/, '')}/site-config`,
+        '/site-config.json', // fallback éventuel statique côté public
+      ];
+      (async () => {
+        for (const url of candidates) {
+          try {
+            const res = await fetch(url, { headers: { Accept: 'application/json' } });
+            if (!res.ok) continue;
+            const data = await res.json();
+            if (data?.helloAssoUrl) {
+              setHelloAssoUrl(String(data.helloAssoUrl));
+              break;
+            }
+          } catch {}
+        }
+      })();
+    }, []);
+
+    // Fonction pour ouvrir HelloAsso
+    const handleDonateClick = () => {
+      window.open(helloAssoUrl || 'https://www.helloasso.com/associations/retrobus-essonne', '_blank');
+    };
 
   return (
     <>
