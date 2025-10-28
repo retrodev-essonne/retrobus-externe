@@ -12,11 +12,9 @@ import Navbar from "./Navbar.jsx";
 import CompatImg from "./CompatImg.jsx";
 
 // Icônes (remplies en rouge rétrobus)
-const HandHeartIcon = ({ size = 28 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="var(--rbe-red)" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 6.5c1.4-1.5 3.5-1.5 4.9 0C18.3 7.9 18.3 10.1 17 11.4L12 16.5 7 11.4C5.7 10.1 5.7 7.9 7.1 6.5c1.4-1.5 3.5-1.5 4.9 0z"/>
-    <path d="M4 14h2v6H4v-6Zm3-2h2v8H7v-8Zm3-1h2v9h-2v-9Zm3 2h2v7h-2v-7Zm3 1h2v6h-2v-6Z" opacity=".9"/>
-    <path d="M3 21h18v1H3z" opacity=".6"/>
+const SimpleHeartIcon = ({ size = 28 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="var(--rbe-red)" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41.81 4.5 2.09C12.59 4.81 14.26 4 16 4 18.5 4 20.5 6 20.5 8.5c0 3.78-3.4 6.86-8.05 11.54L12 21.35z"/>
   </svg>
 );
 
@@ -107,7 +105,7 @@ export default function Header() {
       </header>
 
       <Navbar
-        donateIcon={<HandHeartIcon />}
+        donateIcon={<SimpleHeartIcon />}
         newsletterIcon={<EnvelopeIcon />}
         onDonateClick={handleDonateClick}
         onNewsletterClick={onNewsletterOpen}
