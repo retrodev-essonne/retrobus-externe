@@ -38,8 +38,9 @@ export default function Header() {
   
   const location = useLocation();
 
-  // Fonction pour ouvrir HelloAsso
+  // Configuration publique (HelloAsso + version)
     const [helloAssoUrl, setHelloAssoUrl] = useState('https://www.helloasso.com/associations/association-retrobus-essonne/formulaires/3');
+    const [siteVersion, setSiteVersion] = useState('');
 
     useEffect(() => {
       const API_BASE = import.meta.env.VITE_API_URL || 'https://attractive-kindness-rbe-serveurs.up.railway.app';
@@ -55,8 +56,12 @@ export default function Header() {
             const data = await res.json();
             if (data?.helloAssoUrl) {
               setHelloAssoUrl(String(data.helloAssoUrl));
-              break;
             }
+            if (data?.siteVersion) {
+              setSiteVersion(String(data.siteVersion));
+            }
+            // Don't break on first match to allow reading both fields
+            break;
           } catch {}
         }
       })();
@@ -109,6 +114,7 @@ export default function Header() {
         newsletterIcon={<EnvelopeIcon />}
         onDonateClick={handleDonateClick}
         onNewsletterClick={onNewsletterOpen}
+        siteVersion={siteVersion}
         // Pass disclosure to embed Drawer without its own trigger
         isOpen={navDisclosure.isOpen}
         onOpen={navDisclosure.onOpen}

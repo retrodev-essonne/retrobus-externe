@@ -27,6 +27,19 @@ const getTypeIcon = (type) => {
   }
 };
 
+const TAGS = {
+  feature: '✨',
+  fix: '🐛',
+  update: '🔄',
+  security: '🔒',
+  perf: '🚀',
+  ui: '🎨',
+  content: '📝',
+  deps: '📦',
+  docs: '📚'
+};
+const emojiForTag = (tag) => TAGS[tag] || '•';
+
 const formatDate = (dateStr) => {
   return new Date(dateStr).toLocaleDateString('fr-FR', {
     day: 'numeric',
@@ -168,9 +181,21 @@ export default function Changelog() {
                 </CardHeader>
                 
                 <CardBody pt={0}>
-                  <Text color="gray.700" lineHeight="tall">
-                    {entry.description}
-                  </Text>
+                  {Array.isArray(entry.changes) && entry.changes.length > 0 ? (
+                    <VStack align="start" spacing={2}>
+                      {entry.changes.map((c, i) => (
+                        <Text key={i} color="gray.700" lineHeight="tall">
+                          {typeof c === 'string' ? c : `${emojiForTag(c.tag)} ${c.text}`}
+                        </Text>
+                      ))}
+                    </VStack>
+                  ) : entry.description ? (
+                    <VStack align="start" spacing={2}>
+                      {(String(entry.description).split(/\r?\n/)).map((line, i) => (
+                        <Text key={i} color="gray.700" lineHeight="tall">{line}</Text>
+                      ))}
+                    </VStack>
+                  ) : null}
                 </CardBody>
               </Card>
             ))}

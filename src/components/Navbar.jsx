@@ -39,7 +39,7 @@ const UpdateIcon = ({ size = 26 }) => (
   </svg>
 );
 
-export default function Navbar({ donateIcon, newsletterIcon, onDonateClick, onNewsletterClick, isOpen: isOpenProp, onOpen: onOpenProp, onClose: onCloseProp, embedded = false, userName }) {
+export default function Navbar({ donateIcon, newsletterIcon, onDonateClick, onNewsletterClick, isOpen: isOpenProp, onOpen: onOpenProp, onClose: onCloseProp, embedded = false, userName, siteVersion }) {
   const internalDisclosure = useDisclosure();
   const isControlled = typeof isOpenProp === 'boolean' && typeof onOpenProp === 'function' && typeof onCloseProp === 'function';
   const isOpen = isControlled ? isOpenProp : internalDisclosure.isOpen;
@@ -179,6 +179,11 @@ export default function Navbar({ donateIcon, newsletterIcon, onDonateClick, onNe
               <UpdateIcon />
             </Box>
           </Tooltip>
+          {siteVersion && (
+            <Box as="span" fontSize="xs" color="gray.600" ml={1} userSelect="none">
+              v{siteVersion}
+            </Box>
+          )}
         </HStack>
 
         {/* Contenu navigation centré */}
@@ -283,7 +288,12 @@ export default function Navbar({ donateIcon, newsletterIcon, onDonateClick, onNe
               <Box as={Link} to="/changelog" aria-label="Changelog" onClick={onClose} style={{ textDecoration: 'none' }}>
                 <UpdateIcon size={22} />
               </Box>
-              <Box as="span" fontWeight="bold">Association RétroBus Essonne</Box>
+              <HStack spacing={2} alignItems="baseline">
+                <Box as="span" fontWeight="bold">Association RétroBus Essonne</Box>
+                {siteVersion && (
+                  <Box as="span" fontSize="xs" color="whiteAlpha.900">v{siteVersion}</Box>
+                )}
+              </HStack>
             </HStack>
             {firstName && (
               <Text fontSize="sm" color="whiteAlpha.900" mt={1}>
