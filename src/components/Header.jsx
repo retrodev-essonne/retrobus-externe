@@ -39,8 +39,14 @@ export default function Header() {
   const location = useLocation();
 
   // Configuration publique (HelloAsso + version)
-    const [helloAssoUrl, setHelloAssoUrl] = useState('https://www.helloasso.com/associations/association-retrobus-essonne/formulaires/3');
-    const [siteVersion, setSiteVersion] = useState('');
+  const [helloAssoUrl, setHelloAssoUrl] = useState('https://www.helloasso.com/associations/association-retrobus-essonne/formulaires/3');
+  const [siteVersion, setSiteVersion] = useState('');
+  // Header config (editable from intranet)
+  const [headerBgUrl, setHeaderBgUrl] = useState('');
+  const [headerBgSize, setHeaderBgSize] = useState('cover');
+  const [headerBgFocal, setHeaderBgFocal] = useState({ x: 50, y: 50 });
+  const [logoUrl, setLogoUrl] = useState('');
+  const [logoHeight, setLogoHeight] = useState(44);
 
     useEffect(() => {
       const API_BASE = import.meta.env.VITE_API_URL || 'https://attractive-kindness-rbe-serveurs.up.railway.app';
@@ -60,6 +66,14 @@ export default function Header() {
             if (data?.siteVersion) {
               setSiteVersion(String(data.siteVersion));
             }
+            // Header fields
+            if (data?.headerBgUrl) setHeaderBgUrl(String(data.headerBgUrl));
+            if (data?.headerBgSize) setHeaderBgSize(String(data.headerBgSize));
+            if (Number.isFinite(data?.headerBgFocalX) && Number.isFinite(data?.headerBgFocalY)) {
+              setHeaderBgFocal({ x: data.headerBgFocalX, y: data.headerBgFocalY });
+            }
+            if (data?.logoUrl) setLogoUrl(String(data.logoUrl));
+            if (Number.isFinite(data?.logoWidth)) setLogoHeight(parseInt(data.logoWidth, 10));
             // Don't break on first match to allow reading both fields
             break;
           } catch {}
@@ -79,7 +93,9 @@ export default function Header() {
         <div
           className="header-bg"
           style={{
-            backgroundImage: `url(${bg})`,
+            backgroundImage: `url(${headerBgUrl || bg})`,
+            backgroundSize: headerBgSize || 'cover',
+            backgroundPosition: `${headerBgFocal.x}% ${headerBgFocal.y}%`
           }}
         />
         
@@ -87,9 +103,10 @@ export default function Header() {
         <div className="header-inner">
           <CompatImg 
             className="header-logo" 
-            path={LOGO_PATH}
+            path={logoUrl || LOGO_PATH}
             alt="Logo RBE"
             fallback={logoDefault}
+            style={{ height: `${logoHeight || 44}px` }}
           />
           {/* Mobile menu trigger on the right inside header */}
           <Box display={{ base: "block", md: "none" }}>
