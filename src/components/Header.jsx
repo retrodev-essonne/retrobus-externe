@@ -41,9 +41,11 @@ export default function Header() {
   const [helloAssoUrl, setHelloAssoUrl] = useState('https://www.helloasso.com/associations/association-retrobus-essonne/formulaires/3');
   const [siteVersion, setSiteVersion] = useState('');
   // Header config (focal point et taille configurables via API, images gérées manuellement)
+  // Valeurs par défaut immédiates pour éviter le clignotement
   const [headerBgSize, setHeaderBgSize] = useState('cover');
   const [headerBgFocal, setHeaderBgFocal] = useState({ x: 50, y: 50 });
   const [logoHeight, setLogoHeight] = useState(44);
+  const [configLoaded, setConfigLoaded] = useState(false);
 
     useEffect(() => {
       const API_BASE = import.meta.env.VITE_API_URL || 'https://attractive-kindness-rbe-serveurs.up.railway.app';
@@ -69,6 +71,7 @@ export default function Header() {
               setHeaderBgFocal({ x: data.headerBgFocalX, y: data.headerBgFocalY });
             }
             if (Number.isFinite(data?.logoWidth)) setLogoHeight(parseInt(data.logoWidth, 10));
+            setConfigLoaded(true);
             break;
           } catch {}
         }
@@ -87,7 +90,7 @@ export default function Header() {
         <div
           className="header-bg"
           style={{
-            backgroundImage: `url(/assets/header.jpg?t=${Date.now()})`,
+            backgroundImage: `url(/assets/header.jpg)`,
             backgroundSize: headerBgSize || 'cover',
             backgroundPosition: `${headerBgFocal.x}% ${headerBgFocal.y}%`
           }}
