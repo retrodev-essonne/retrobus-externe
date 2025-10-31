@@ -1,0 +1,129 @@
+📱 PROCESSUS DE GÉNÉRATION DE L'APK
+====================================
+
+┌─────────────────────────────────────────────────────────────┐
+│                    ÉTAPES DU PROCESSUS                      │
+└─────────────────────────────────────────────────────────────┘
+
+1️⃣  PRÉREQUIS (À installer une seule fois)
+   ├─ Java Development Kit (JDK 17+)
+   ├─ Android Studio + SDK
+   └─ Configurer variables d'environnement
+
+2️⃣  DÉVELOPPEMENT
+   ├─ npm install (dépendances)
+   ├─ npm run dev (tester en local)
+   └─ npm run build (générer dist/)
+
+3️⃣  PRÉPARATION ANDROID
+   ├─ npx cap add android (première fois)
+   ├─ npm run build
+   └─ npx cap sync android
+
+4️⃣  GÉNÉRATION APK
+   ├─ Debug   → ./gradlew assembleDebug
+   └─ Release → ./gradlew assembleRelease
+
+5️⃣  INSTALLATION / DISTRIBUTION
+   ├─ Appareil USB → adb install app.apk
+   ├─ Emulator     → Android Studio
+   └─ Play Store   → Google Play Console
+
+
+┌─────────────────────────────────────────────────────────────┐
+│            FICHIERS GÉNÉRÉS AUTOMATIQUEMENT                 │
+└─────────────────────────────────────────────────────────────┘
+
+externe/
+├── 📄 capacitor.config.ts          ← Configuration Capacitor
+├── 📄 GUIDE_APK.md                 ← Guide complet
+├── 📄 APK_README.md                ← Démarrage rapide
+├── 📄 check-apk-setup.ps1          ← Vérifier config
+├── 📄 build-apk-debug.ps1          ← Script Debug
+├── 📄 build-apk-release.ps1        ← Script Release
+│
+├── 📁 dist/                        ← Web build
+│   ├── index.html
+│   ├── assets/
+│   └── ...
+│
+└── 📁 android/                     ← Projet Android Gradle
+    ├── 📁 app/
+    │   ├── 📁 src/main/
+    │   │   ├── AndroidManifest.xml
+    │   │   ├── 📁 assets/public/   ← Copie de dist/
+    │   │   ├── 📁 java/
+    │   │   └── 📁 res/             ← Icônes, couleurs, etc
+    │   │
+    │   └── 📁 build/outputs/apk/   ← 📱 LES APK SONT ICI
+    │       ├── 📁 debug/
+    │       │   └── app-debug.apk   ← Pour tester
+    │       └── 📁 release/
+    │           └── app-release-unsigned.apk ← Pour Play Store
+    │
+    ├── build.gradle.kts            ← Config Gradle
+    ├── settings.gradle.kts
+    └── gradlew / gradlew.bat        ← Script Gradle
+
+
+┌─────────────────────────────────────────────────────────────┐
+│              TAILLES APPROXIMATIVES                         │
+└─────────────────────────────────────────────────────────────┘
+
+node_modules/        ~500 MB   (npm dependencies)
+android/            ~300 MB   (SDK + Gradle)
+dist/               ~700 KB   (Web build)
+app-debug.apk       ~60 MB    (APK Debug)
+app-release.apk     ~40 MB    (APK Release, avec minification)
+
+
+┌─────────────────────────────────────────────────────────────┐
+│                    COMMANDES UTILES                         │
+└─────────────────────────────────────────────────────────────┘
+
+# Vérifier la configuration
+powershell .\check-apk-setup.ps1
+
+# Build rapide Debug
+powershell .\build-apk-debug.ps1
+
+# Build Release signé
+powershell .\build-apk-release.ps1
+
+# Manuellement - Build web
+npm run build
+
+# Manuellement - Sync Android
+npx cap sync android
+
+# Manuellement - Ouvrir dans Android Studio
+npx cap open android
+
+# Installer sur appareil
+adb install .\android\app\build\outputs\apk\debug\app-debug.apk
+
+# Lancer app sur emulator
+adb shell am start -n fr.association.retrobus.essonne/.MainActivity
+
+
+┌─────────────────────────────────────────────────────────────┐
+│                  POINTS IMPORTANTS                          │
+└─────────────────────────────────────────────────────────────┘
+
+⚠️  AVANT DE GÉNÉRER L'APK:
+    • Tester l'app en local (npm run dev)
+    • Vérifier que npm run build fonctionne
+    • Configurer ANDROID_HOME et JAVA_HOME
+
+✅ APRÈS GÉNÉRATION:
+    • Tester l'APK sur appareil avant publication
+    • Sauvegarder la clé de signature (retrobus-essonne.keystore)
+    • Versionner l'APK (versionCode dans build.gradle.kts)
+
+📦 DISTRIBUTION:
+    • APK Debug → Tests internes, développement
+    • APK Release → Google Play Store, distribution
+    • Clé de signature → À garder en sécurité !
+
+
+Status: ✅ CAPACITOR CONFIGURÉ ET PRÊT À L'EMPLOI
