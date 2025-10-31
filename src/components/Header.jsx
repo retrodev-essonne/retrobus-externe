@@ -40,10 +40,9 @@ export default function Header() {
   // Configuration publique (HelloAsso + version)
   const [helloAssoUrl, setHelloAssoUrl] = useState('https://www.helloasso.com/associations/association-retrobus-essonne/formulaires/3');
   const [siteVersion, setSiteVersion] = useState('');
-  // Header config (focal point et taille restent configurables, mais l'image vient toujours de l'asset local)
+  // Header config (focal point et taille configurables via API, images gérées manuellement)
   const [headerBgSize, setHeaderBgSize] = useState('cover');
   const [headerBgFocal, setHeaderBgFocal] = useState({ x: 50, y: 50 });
-  const [logoUrl, setLogoUrl] = useState('');
   const [logoHeight, setLogoHeight] = useState(44);
 
     useEffect(() => {
@@ -64,12 +63,11 @@ export default function Header() {
             if (data?.siteVersion) {
               setSiteVersion(String(data.siteVersion));
             }
-            // Header fields (sauf URL de l'image qui vient maintenant de l'asset local)
+            // Header fields
             if (data?.headerBgSize) setHeaderBgSize(String(data.headerBgSize));
             if (Number.isFinite(data?.headerBgFocalX) && Number.isFinite(data?.headerBgFocalY)) {
               setHeaderBgFocal({ x: data.headerBgFocalX, y: data.headerBgFocalY });
             }
-            if (data?.logoUrl) setLogoUrl(String(data.logoUrl));
             if (Number.isFinite(data?.logoWidth)) setLogoHeight(parseInt(data.logoWidth, 10));
             break;
           } catch {}
@@ -99,7 +97,7 @@ export default function Header() {
         <div className="header-inner">
           <CompatImg 
             className="header-logo" 
-            path={logoUrl || LOGO_PATH}
+            path={LOGO_PATH}
             alt="Logo RBE"
             fallback={logoDefault}
             style={{ height: `${logoHeight || 44}px` }}
