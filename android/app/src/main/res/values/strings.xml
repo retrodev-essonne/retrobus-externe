@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">RétroBus Essonne</string>
-    <string name="title_activity_main">RétroBus Essonne</string>
-    <string name="package_name">fr.association.retrobus.essonne</string>
-    <string name="custom_url_scheme">fr.association.retrobus.essonne</string>
-</resources>
