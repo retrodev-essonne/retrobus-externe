@@ -6,7 +6,7 @@ import {
   useDisclosure, VStack, Text, Heading, Button, Input, FormControl, FormLabel, HStack, IconButton
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import logoDefault from "../assets/RétroBouh2025.svg";
+import logoDefault from "../assets/rbe_logo.svg";
 import Navbar from "./Navbar.jsx";
 import CompatImg from "./CompatImg.jsx";
 
