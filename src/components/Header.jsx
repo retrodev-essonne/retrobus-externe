@@ -6,7 +6,6 @@ import {
   useDisclosure, VStack, Text, Heading, Button, Input, FormControl, FormLabel, HStack, IconButton
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import bg from "../assets/header.jpg";
 import logoDefault from "../assets/RétroBouh2025.svg";
 import Navbar from "./Navbar.jsx";
 import CompatImg from "./CompatImg.jsx";
@@ -86,11 +85,11 @@ export default function Header() {
   return (
     <>
       <header className="site-header">
-        {/* Background - toujours depuis l'asset local header.jpg */}
+        {/* Background - toujours depuis le fichier public /assets/header.jpg */}
         <div
           className="header-bg"
           style={{
-            backgroundImage: `url(${bg})`,
+            backgroundImage: `url(/assets/header.jpg?t=${Date.now()})`,
             backgroundSize: headerBgSize || 'cover',
             backgroundPosition: `${headerBgFocal.x}% ${headerBgFocal.y}%`
           }}
