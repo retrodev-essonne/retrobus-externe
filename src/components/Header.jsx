@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
   Box, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody,
-  useDisclosure, VStack, Text, Heading, Button, Input, FormControl, FormLabel, HStack, Image, IconButton
+  useDisclosure, VStack, Text, Heading, Button, Input, FormControl, FormLabel, HStack, IconButton
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import bg from "../assets/_MG_0969.jpg";

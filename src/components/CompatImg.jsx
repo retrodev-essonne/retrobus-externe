@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image } from '@chakra-ui/react';
+import { Image as ChakraImage } from '@chakra-ui/react';
 
 /**
  * Composant Image compatible qui gère différents formats d'images
@@ -25,7 +25,7 @@ const CompatImg = ({
   const imageSrc = currentSrc || fallback;
 
   return (
-    <Image
+    <ChakraImage
       src={imageSrc}
       alt={alt}
       className={className}
