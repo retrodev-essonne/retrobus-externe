@@ -6,7 +6,7 @@ import {
   useDisclosure, VStack, Text, Heading, Button, Input, FormControl, FormLabel, HStack, IconButton
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import bg from "../assets/_MG_0969.jpg";
+import bg from "../assets/header.jpg";
 import logoDefault from "../assets/RétroBouh2025.svg";
 import Navbar from "./Navbar.jsx";
 import CompatImg from "./CompatImg.jsx";
@@ -41,8 +41,7 @@ export default function Header() {
   // Configuration publique (HelloAsso + version)
   const [helloAssoUrl, setHelloAssoUrl] = useState('https://www.helloasso.com/associations/association-retrobus-essonne/formulaires/3');
   const [siteVersion, setSiteVersion] = useState('');
-  // Header config (editable from intranet)
-  const [headerBgUrl, setHeaderBgUrl] = useState('');
+  // Header config (focal point et taille restent configurables, mais l'image vient toujours de l'asset local)
   const [headerBgSize, setHeaderBgSize] = useState('cover');
   const [headerBgFocal, setHeaderBgFocal] = useState({ x: 50, y: 50 });
   const [logoUrl, setLogoUrl] = useState('');
@@ -66,15 +65,13 @@ export default function Header() {
             if (data?.siteVersion) {
               setSiteVersion(String(data.siteVersion));
             }
-            // Header fields
-            if (data?.headerBgUrl) setHeaderBgUrl(String(data.headerBgUrl));
+            // Header fields (sauf URL de l'image qui vient maintenant de l'asset local)
             if (data?.headerBgSize) setHeaderBgSize(String(data.headerBgSize));
             if (Number.isFinite(data?.headerBgFocalX) && Number.isFinite(data?.headerBgFocalY)) {
               setHeaderBgFocal({ x: data.headerBgFocalX, y: data.headerBgFocalY });
             }
             if (data?.logoUrl) setLogoUrl(String(data.logoUrl));
             if (Number.isFinite(data?.logoWidth)) setLogoHeight(parseInt(data.logoWidth, 10));
-            // Don't break on first match to allow reading both fields
             break;
           } catch {}
         }
@@ -89,11 +86,11 @@ export default function Header() {
   return (
     <>
       <header className="site-header">
-        {/* Background */}
+        {/* Background - toujours depuis l'asset local header.jpg */}
         <div
           className="header-bg"
           style={{
-            backgroundImage: `url(${headerBgUrl || bg})`,
+            backgroundImage: `url(${bg})`,
             backgroundSize: headerBgSize || 'cover',
             backgroundPosition: `${headerBgFocal.x}% ${headerBgFocal.y}%`
           }}
