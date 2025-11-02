@@ -189,12 +189,16 @@ export default function Changelog() {
                         </Text>
                       ))}
                     </VStack>
-                  ) : entry.description ? (
+                  ) : entry.description && (typeof entry.description === 'string' || typeof entry.description === 'number') ? (
                     <VStack align="start" spacing={2}>
                       {(String(entry.description).split(/\r?\n/)).map((line, i) => (
                         <Text key={i} color="gray.700" lineHeight="tall">{line}</Text>
                       ))}
                     </VStack>
+                  ) : entry.description ? (
+                    <Text color="gray.700" lineHeight="tall">
+                      Données indisponibles
+                    </Text>
                   ) : null}
                 </CardBody>
               </Card>
