@@ -92,7 +92,7 @@ export default function Header() {
           style={{
             backgroundImage: `url(/assets/header.jpg)`,
             backgroundSize: headerBgSize || 'cover',
-            backgroundPosition: `${headerBgFocal.x}% ${headerBgFocal.y}%`
+            backgroundPosition: `50% ${headerBgFocal.28}%`
           }}
         />
         
@@ -103,7 +103,7 @@ export default function Header() {
             path={LOGO_PATH}
             alt="Logo RBE"
             fallback={logoDefault}
-            style={{ height: `${logoHeight || 44}px` }}
+            style={{ height: `${logoHeight || 115}px` }}
           />
           {/* Mobile menu trigger on the right inside header */}
           <Box display={{ base: "block", md: "none" }}>
