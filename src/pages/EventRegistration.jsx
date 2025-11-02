@@ -25,7 +25,8 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  SimpleGrid
+  SimpleGrid,
+  Checkbox
 } from "@chakra-ui/react";
 import { FiArrowLeft, FiCalendar, FiMapPin, FiUsers, FiGift, FiExternalLink, FiMail, FiUser } from "react-icons/fi";
 
@@ -44,7 +45,13 @@ export default function EventRegistration() {
     participantName: '',
     participantEmail: '',
     adultTickets: 1,
-    childTickets: 0
+    childTickets: 0,
+    // Champs spécifiques au Défilé Anciennes
+    vehicleName: '',
+    vehicleModel: '',
+    vehicleYear: '',
+    clubName: '',
+    isClubMember: false
   });
   const [submitting, setSubmitting] = useState(false);
   const toast = useToast();
@@ -143,7 +150,8 @@ export default function EventRegistration() {
         requiresRegistration: extras.requiresRegistration || false,
         allowPublicRegistration: extras.allowPublicRegistration || false,
         isFree: extras.isFree || (!event.adultPrice && !event.childPrice),
-        registrationMethod: extras.registrationMethod || 'internal'
+        registrationMethod: extras.registrationMethod || 'internal',
+        registrationType: extras.registrationType || 'standard'
       };
     } catch (e) {
       return {
@@ -186,6 +194,28 @@ export default function EventRegistration() {
       setSubmitting(true);
       const eventInfo = getEventTypeInfo(event);
       
+      // Validation des champs requis pour défilé de véhicules anciens
+      if (eventInfo.registrationType === 'parade_vehicles') {
+        if (!formData.vehicleModel?.trim() || !formData.vehicleYear?.trim()) {
+          toast({
+            status: "error",
+            title: "Véhicule incomplet",
+            description: "Veuillez remplir le modèle et l'année du véhicule."
+          });
+          setSubmitting(false);
+          return;
+        }
+        if (formData.isClubMember && !formData.clubName?.trim()) {
+          toast({
+            status: "error",
+            title: "Club requis",
+            description: "Veuillez indiquer le nom du club."
+          });
+          setSubmitting(false);
+          return;
+        }
+      }
+      
       const registrationData = {
         eventId: event.id,
         participantName: formData.participantName,
@@ -193,7 +223,15 @@ export default function EventRegistration() {
         adultTickets: formData.adultTickets,
         childTickets: formData.childTickets,
         paymentMethod: eventInfo.isFree ? 'free' : 
-                      (eventInfo.registrationMethod === 'helloasso' ? 'helloasso' : 'internal')
+                      (eventInfo.registrationMethod === 'helloasso' ? 'helloasso' : 'internal'),
+        // Ajouter les champs spécifiques au défilé si applicable
+        ...(eventInfo.registrationType === 'parade_vehicles' && {
+          vehicleModel: formData.vehicleModel,
+          vehicleYear: formData.vehicleYear,
+          vehicleName: formData.vehicleName, // immatriculation optionnelle
+          isClubMember: formData.isClubMember,
+          clubName: formData.clubName || null
+        })
       };
 
       console.log('📝 Submitting registration:', registrationData);
@@ -412,6 +450,76 @@ export default function EventRegistration() {
                 />
               </FormControl>
             </SimpleGrid>
+
+            {/* Formulaire spécifique Défilé Anciennes */}
+            {eventInfo.registrationType === 'parade_vehicles' && (
+              <Box w="100%" p={4} borderWidth="1px" borderRadius="md" bg="blue.50">
+                <Heading size="sm" mb={4}>🚗 Informations du Véhicule</Heading>
+                <VStack spacing={4} align="start" w="100%">
+                  <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} w="100%">
+                    <FormControl isRequired>
+                      <FormLabel>Marque/Modèle</FormLabel>
+                      <Input
+                        value={formData.vehicleModel}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, vehicleModel: e.target.value }))
+                        }
+                        placeholder="Ex: Citroën 2CV, Renault Dauphine"
+                      />
+                    </FormControl>
+
+                    <FormControl isRequired>
+                      <FormLabel>Année</FormLabel>
+                      <Input
+                        type="number"
+                        value={formData.vehicleYear}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, vehicleYear: e.target.value }))
+                        }
+                        placeholder="Ex: 1985"
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel>Immatriculation (optionnel)</FormLabel>
+                      <Input
+                        value={formData.vehicleName}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, vehicleName: e.target.value }))
+                        }
+                        placeholder="Ex: 75 AB 123"
+                      />
+                    </FormControl>
+                  </SimpleGrid>
+
+                  {/* Club membership */}
+                  <FormControl>
+                    <HStack spacing={3}>
+                      <Checkbox
+                        isChecked={formData.isClubMember}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, isClubMember: e.target.checked }))
+                        }
+                      />
+                      <FormLabel mb={0}>Je suis membre d'un club</FormLabel>
+                    </HStack>
+                  </FormControl>
+
+                  {formData.isClubMember && (
+                    <FormControl w="100%">
+                      <FormLabel>Nom du club</FormLabel>
+                      <Input
+                        value={formData.clubName}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, clubName: e.target.value }))
+                        }
+                        placeholder="Ex: Club des Véhicules Anciens de Seine-et-Marne"
+                      />
+                    </FormControl>
+                  )}
+                </VStack>
+              </Box>
+            )}
 
             {/* Sélection des billets */}
             <Box w="100%">
