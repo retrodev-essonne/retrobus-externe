@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
+import { apiUrl } from "../lib/api";
 import { 
   Box, 
   Heading, 
@@ -7,12 +8,10 @@ import {
   VStack, 
   Button,
   Alert,
-  AlertIcon,
-  useToast
+  AlertIcon
 } from "@chakra-ui/react";
 
 export default function Contact() {
-  const toast = useToast();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,9 +21,6 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
-
-  // Configuration API pour envoyer les emails via le backend
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://attractive-kindness-rbe-serveurs.up.railway.app';
 
   useEffect(() => {
     document.body.style.overflowX = "hidden";
@@ -47,126 +43,34 @@ export default function Contact() {
     setShowError(false);
     
     try {
-      // Validation basique
-      if (!formData.name.trim() || !formData.email.trim() || !formData.subject.trim() || !formData.message.trim()) {
-        setShowError(true);
-        toast({
-          status: "error",
-          title: "Champs requis",
-          description: "Veuillez remplir tous les champs",
-          duration: 5000,
-          isClosable: true
-        });
-        setIsSubmitting(false);
-        return;
-      }
-
-      console.log('📧 Envoi du message de contact...', {
-        from: formData.email,
-        subject: formData.subject
+      // Envoi au backend pour dispatch vers l'adresse de l'association
+      const resp = await fetch(apiUrl('/public/contact'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message
+        })
       });
 
-      // Essayer plusieurs endpoints possibles
-      const endpoints = [
-        `${API_BASE_URL}/contact/send`,
-        `${API_BASE_URL}/api/contact/send`,
-        `${API_BASE_URL}/email/send-contact`,
-        `${API_BASE_URL}/api/email/send-contact`
-      ];
-
-      let success = false;
-      let lastError = null;
-
-      for (const endpoint of endpoints) {
-        try {
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              senderName: formData.name,
-              senderEmail: formData.email,
-              subject: formData.subject,
-              message: formData.message,
-              recipientEmail: 'association.rbe@gmail.com'
-            })
-          });
-
-          if (response.ok) {
-            const result = await response.json();
-            console.log('✅ Email envoyé avec succès:', result);
-            success = true;
-            break;
-          }
-        } catch (err) {
-          lastError = err;
-          console.warn(`⚠️ Endpoint ${endpoint} échoué:`, err.message);
-          continue;
-        }
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err?.error || `HTTP ${resp.status}`);
       }
 
-      if (success) {
-        setShowSuccess(true);
-        setFormData({ name: "", email: "", subject: "", message: "" });
-        toast({
-          status: "success",
-          title: "Message envoyé",
-          description: "Votre message a été envoyé avec succès. Nous vous répondrons rapidement.",
-          duration: 5000,
-          isClosable: true
-        });
-        setTimeout(() => setShowSuccess(false), 5000);
-      } else {
-        // Si le backend ne répond pas, envoyer via fallback local
-        console.log('⚠️ Backend non disponible, utilisation du fallback...');
-        await sendViaFallback();
-      }
-      
-    } catch (error) {
-      console.error('❌ Erreur lors de l\'envoi:', error);
-      setShowError(true);
-      toast({
-        status: "error",
-        title: "Erreur",
-        description: "Une erreur est survenue. Veuillez réessayer ou nous contacter directement.",
-        duration: 5000,
-        isClosable: true
-      });
-      setTimeout(() => setShowError(false), 5000);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Fallback: envoyer via un service d'email tiers si le backend ne répond pas
-  const sendViaFallback = async () => {
-    try {
-      // Créer un lien mailto comme fallback
-      const mailtoLink = `mailto:association.rbe@gmail.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`De: ${formData.name} <${formData.email}>\n\n${formData.message}`)}`;
-      
-      // Copier l'adresse email dans le presse-papiers
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(formData.email);
-      }
-      
-      toast({
-        status: "info",
-        title: "Serveur temporairement indisponible",
-        description: "Votre adresse email a été copiée. Veuillez nous envoyer votre message directement à association.rbe@gmail.com",
-        duration: 7000,
-        isClosable: true
-      });
-
-      // Ouvrir le client email par défaut
-      window.open(mailtoLink);
-      
+      console.log('✅ Message transmis au backend avec succès');
       setShowSuccess(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
       setTimeout(() => setShowSuccess(false), 5000);
+      
     } catch (error) {
-      console.error('❌ Fallback échoué:', error);
+      console.error('❌ Erreur envoi message:', error);
       setShowError(true);
+      setTimeout(() => setShowError(false), 5000);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
