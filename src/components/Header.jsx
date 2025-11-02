@@ -103,7 +103,7 @@ export default function Header() {
             path={LOGO_PATH}
             alt="Logo RBE"
             fallback={logoDefault}
-            style={{ height: `${logoHeight || 115}px` }}
+            style={{ height: `115 px` }}
           />
           {/* Mobile menu trigger on the right inside header */}
           <Box display={{ base: "block", md: "none" }}>
