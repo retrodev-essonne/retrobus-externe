@@ -174,19 +174,24 @@ export default function Header() {
                 }
                 try {
                   const API_BASE = import.meta.env.VITE_API_URL || 'https://attractive-kindness-rbe-serveurs.up.railway.app';
+                  console.log('📧 Attempting subscribe to:', API_BASE);
                   const res = await fetch(`${API_BASE}/newsletter/subscribe`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: newsletterEmail.trim().toLowerCase() })
                   });
+                  console.log('📧 Response status:', res.status);
                   if (!res.ok) {
-                    const err = await res.json().catch(() => ({}));
+                    const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
                     throw new Error(err.error || `HTTP ${res.status}`);
                   }
+                  const data = await res.json();
+                  console.log('✅ Subscribe success:', data);
                   alert('✅ Inscription réussie ! Un email de confirmation a été envoyé.');
                   setNewsletterEmail('');
                   onNewsletterClose();
                 } catch (e) {
+                  console.error('❌ Subscribe error:', e);
                   alert(`❌ Erreur: ${e.message}`);
                 }
               }}
