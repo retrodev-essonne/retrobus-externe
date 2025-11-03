@@ -40,6 +40,12 @@ export default function Header() {
   // Configuration publique (HelloAsso + version)
   const [helloAssoUrl, setHelloAssoUrl] = useState('https://www.helloasso.com/associations/association-retrobus-essonne/formulaires/3');
   const [siteVersion, setSiteVersion] = useState('');
+  // Header config (focal point et taille configurables via API, images gérées manuellement)
+  // Valeurs par défaut immédiates pour éviter le clignotement
+  const [headerBgSize, setHeaderBgSize] = useState('cover');
+  const [headerBgFocal, setHeaderBgFocal] = useState({ x: 50, y: 50 });
+  const [logoHeight, setLogoHeight] = useState(44);
+  const [configLoaded, setConfigLoaded] = useState(false);
 
     useEffect(() => {
       const API_BASE = import.meta.env.VITE_API_URL || 'https://attractive-kindness-rbe-serveurs.up.railway.app';
@@ -59,6 +65,13 @@ export default function Header() {
             if (data?.siteVersion) {
               setSiteVersion(String(data.siteVersion));
             }
+            // Header fields
+            if (data?.headerBgSize) setHeaderBgSize(String(data.headerBgSize));
+            if (Number.isFinite(data?.headerBgFocalX) && Number.isFinite(data?.headerBgFocalY)) {
+              setHeaderBgFocal({ x: data.headerBgFocalX, y: data.headerBgFocalY });
+            }
+            if (Number.isFinite(data?.logoWidth)) setLogoHeight(parseInt(data.logoWidth, 10));
+            setConfigLoaded(true);
             break;
           } catch {}
         }
@@ -78,7 +91,7 @@ export default function Header() {
           className="header-bg"
           style={{
             backgroundImage: `url(/assets/header.jpg)`,
-            backgroundSize: 'cover',
+            backgroundSize: headerBgSize || 'cover',
             backgroundPosition: `50% 28%`
           }}
         />
@@ -90,7 +103,7 @@ export default function Header() {
             path={LOGO_PATH}
             alt="Logo RBE"
             fallback={logoDefault}
-            style={{ height: "115px" }}
+            style={{ height: `115 px` }}
           />
           {/* Mobile menu trigger on the right inside header */}
           <Box display={{ base: "block", md: "none" }}>
