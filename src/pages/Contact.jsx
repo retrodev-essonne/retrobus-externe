@@ -47,6 +47,7 @@ export default function Contact() {
     try {
       // Envoi au backend pour dispatch vers l'adresse de l'association
       const API_BASE = import.meta.env.VITE_API_URL || 'https://attractive-kindness-rbe-serveurs.up.railway.app';
+      console.log('📧 Submitting contact form to:', API_BASE);
       const resp = await fetch(`${API_BASE}/public/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -58,12 +59,15 @@ export default function Contact() {
         })
       });
 
+      console.log('📧 Response status:', resp.status);
+      
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({}));
         throw new Error(err?.error || `HTTP ${resp.status}`);
       }
 
-      console.log('✅ Message transmis au backend avec succès');
+      const data = await resp.json();
+      console.log('✅ Message submitted successfully:', data);
       setShowSuccess(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
       setTimeout(() => setShowSuccess(false), 5000);
