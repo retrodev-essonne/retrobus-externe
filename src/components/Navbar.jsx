@@ -70,17 +70,28 @@ export default function Navbar({ donateIcon, newsletterIcon, onDonateClick, onNe
     setNewsletterStatus(null);
     
     try {
+      console.log('📧 [Newsletter] Submitting to:', `${API_URL}/newsletter/subscribe`);
+      console.log('📧 [Newsletter] Email:', newsletterEmail.trim());
+      
       const res = await fetch(`${API_URL}/newsletter/subscribe`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ email: newsletterEmail.trim() })
       });
       
+      console.log('📧 [Newsletter] Response status:', res.status);
+      
       if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
+        const errData = await res.text();
+        console.error('📧 [Newsletter] Error response:', errData);
+        throw new Error(`HTTP ${res.status}: ${errData}`);
       }
       
       const json = await res.json();
+      console.log('📧 [Newsletter] Response JSON:', json);
+      
       if (json.duplicated) {
         toast({
           status: "info",
@@ -105,12 +116,12 @@ export default function Navbar({ donateIcon, newsletterIcon, onDonateClick, onNe
       }, 1500);
       
     } catch (e) {
-      console.error('Newsletter subscribe error:', e);
+      console.error('❌ [Newsletter] Subscribe error:', e);
       setNewsletterStatus('error');
       toast({
         status: "error",
         title: "Erreur d'inscription",
-        description: "Une erreur est survenue. Veuillez réessayer.",
+        description: e.message || "Une erreur est survenue. Veuillez réessayer.",
         duration: 4000
       });
       setTimeout(() => setNewsletterStatus(null), 4000);
