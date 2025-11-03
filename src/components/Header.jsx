@@ -167,10 +167,28 @@ export default function Header() {
             <Button
               colorScheme="red"
               width="100%"
-              onClick={() => {
-                // Logique d'inscription newsletter
-                console.log('Newsletter:', newsletterEmail);
-                onNewsletterClose();
+              onClick={async () => {
+                if (!newsletterEmail || !newsletterEmail.includes('@')) {
+                  alert('Veuillez entrer une adresse email valide');
+                  return;
+                }
+                try {
+                  const API_BASE = import.meta.env.VITE_API_URL || 'https://attractive-kindness-rbe-serveurs.up.railway.app';
+                  const res = await fetch(`${API_BASE}/newsletter/subscribe`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: newsletterEmail.trim().toLowerCase() })
+                  });
+                  if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    throw new Error(err.error || `HTTP ${res.status}`);
+                  }
+                  alert('✅ Inscription réussie ! Un email de confirmation a été envoyé.');
+                  setNewsletterEmail('');
+                  onNewsletterClose();
+                } catch (e) {
+                  alert(`❌ Erreur: ${e.message}`);
+                }
               }}
             >
               S'inscrire à la newsletter

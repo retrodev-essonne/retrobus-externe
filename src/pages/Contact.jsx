@@ -8,7 +8,9 @@ import {
   VStack, 
   Button,
   Alert,
-  AlertIcon
+  AlertIcon,
+  Spinner,
+  HStack
 } from "@chakra-ui/react";
 
 export default function Contact() {
@@ -44,7 +46,8 @@ export default function Contact() {
     
     try {
       // Envoi au backend pour dispatch vers l'adresse de l'association
-      const resp = await fetch(apiUrl('/public/contact'), {
+      const API_BASE = import.meta.env.VITE_API_URL || 'https://attractive-kindness-rbe-serveurs.up.railway.app';
+      const resp = await fetch(`${API_BASE}/public/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -256,7 +259,14 @@ export default function Contact() {
                     _hover={{ bg: "red.600" }}
                     _disabled={{ bg: "gray.400", cursor: "not-allowed" }}
                   >
-                    {isSubmitting ? "Envoi en cours..." : "Envoyer le message"}
+                    {isSubmitting ? (
+                      <HStack spacing={2}>
+                        <Spinner size="sm" color="white" />
+                        <Text>Envoi en cours...</Text>
+                      </HStack>
+                    ) : (
+                      "Envoyer le message"
+                    )}
                   </Button>
                 </VStack>
               </form>
